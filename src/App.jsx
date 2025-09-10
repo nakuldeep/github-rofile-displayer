@@ -12,10 +12,7 @@ function App() {
 
   function submit(e) {
     e.preventDefault();
-    setQuery(username);
-    console.log(query);
-
-    // console.log(e.target.value, e);
+    setQuery(username.replace(" ","").toLowerCase());
   }
 
   useEffect(() => {
@@ -61,46 +58,52 @@ function App() {
       </form>
 
       {/* Loading & Error */}
-      {loading && <p className="text-center text-lg mt-5">Loading...</p>}
+      {loading && (
+        <div className="flex justify-center items-center mt-5">
+          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
       {/* Profile Displayer Card */}
       {userData && (
-        <div className=" w-[90vw]  bg-white rounded-2xl shadow-md p-5 flex-col justify-between mt-5">
+        <div className=" w-[90vw]  bg-white rounded-2xl shadow-md p-5 flex-col justify-between mt-5 ">
           <img
             src={userData.avatar_url}
             alt={userData.name}
             className="h-25 w-25 rounded-2xl border-0 "
           />
-          <div className="mt-4 mb-3 flex gap-2.5 align-middle">
-            <h3>{userData.name}</h3>
-            <p className="text-xs font-extralight text-gray-700">
-              @{userData.login}
-            </p>
-          </div>
-          <p className=" text-gray-700">{userData.bio}</p>
+          <div>
+            <div className="mt-4 mb-3 flex gap-2.5 align-middle">
+              <h3>{userData.name}</h3>
+              <p className="text-xs font-extralight text-gray-700">
+                @{userData.login}
+              </p>
+            </div>
+            <p className=" text-gray-700">{userData.bio}</p>
 
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Card no={userData.followers} data="FOLLOWERS" />
-            <Card no={userData.following} data="FOLLOWINGS" />
-            <Card no={userData.public_repos} data="REPOS" />
-            <Card no={userData.public_gists} data="GISTS" />
-          </div>
-          <div className="mt-4 gap-1.5 flex flex-wrap ">
-            {userData.location ? <Clip data={userData.location} /> : null}
-            {userData.created_at ? (
-              <Clip data={userData.created_at.slice(0, 9)} />
-            ) : null}
-            {userData.twitter_username ? (
-              <Clip data={userData.twitter_username} />
-            ) : null}
-            {userData.blog ? <Clip data={userData.blog} /> : null}
-          </div>
-          <div className="mt-4 gap-3 flex">
-            <Go url={userData.html_url} data="Open Github" />
-            <Go
-              url={`${userData.html_url}?tab=repositories`}
-              data="View Repos"
-            />
+            <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Card no={userData.followers} data="FOLLOWERS" />
+              <Card no={userData.following} data="FOLLOWINGS" />
+              <Card no={userData.public_repos} data="REPOS" />
+              <Card no={userData.public_gists} data="GISTS" />
+            </div>
+            <div className="mt-4 gap-1.5 flex flex-wrap ">
+              {userData.location ? <Clip data={userData.location} /> : null}
+              {userData.created_at ? (
+                <Clip data={userData.created_at.slice(0, 9)} />
+              ) : null}
+              {userData.twitter_username ? (
+                <Clip data={userData.twitter_username} />
+              ) : null}
+              {userData.blog ? <Clip data={userData.blog} /> : null}
+            </div>
+            <div className="mt-4 gap-3 flex">
+              <Go url={userData.html_url} data="Open Github" />
+              <Go
+                url={`${userData.html_url}?tab=repositories`}
+                data="View Repos"
+              />
+            </div>
           </div>
         </div>
       )}

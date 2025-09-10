@@ -12,7 +12,7 @@ function App() {
 
   function submit(e) {
     e.preventDefault();
-    setQuery(username.replace(" ","").toLowerCase());
+    setQuery(username.replace(" ", "").toLowerCase());
   }
 
   useEffect(() => {
@@ -21,7 +21,10 @@ function App() {
         setLoading(true);
         const response = await fetch(`https://api.github.com/users/${query}`);
         const data = await response.json();
-
+        if (data.message === "Not Found") {
+          setUserData(null);
+          return;
+        }
         setUserData(data);
       } catch (e) {
         console.log("Error:", e.message);
@@ -39,7 +42,7 @@ function App() {
     <>
       {/* search Card */}
       <form onSubmit={submit}>
-        <div className=" w-[90vw] bg-white rounded-2xl shadow-md p-5 flex-col justify-between mt-5">
+        <div className=" max-w-3xl w-[90vw] bg-white rounded-2xl shadow-md p-5 flex-col justify-between mt-5">
           <h2 className="text-2xl  mb-1 ">Github Profile Viewer</h2>
           <div className=" flex-col justify-between md:flex-row">
             <input
@@ -63,15 +66,21 @@ function App() {
           <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
+      {/* user not Found */}
+      {!loading && !userData && (
+        <p className="text-center text-red-500 mt-5 ">User not found</p>
+      )}
 
       {/* Profile Displayer Card */}
       {userData && (
-        <div className=" w-[90vw]  bg-white rounded-2xl shadow-md p-5 flex-col justify-between mt-5 ">
+        <div className=" max-w-3xl w-[90vw]  bg-white rounded-2xl shadow-md p-5 flex flex-col justify-center mt-5 md:flex-row md:gap-5 ">
+          
           <img
             src={userData.avatar_url}
             alt={userData.name}
-            className="h-25 w-25 rounded-2xl border-0 "
+            className="h-25 w-25 rounded-2xl border-0 mr"
           />
+
           <div>
             <div className="mt-4 mb-3 flex gap-2.5 align-middle">
               <h3>{userData.name}</h3>
@@ -81,7 +90,7 @@ function App() {
             </div>
             <p className=" text-gray-700">{userData.bio}</p>
 
-            <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-3  md:grid-cols-4">
               <Card no={userData.followers} data="FOLLOWERS" />
               <Card no={userData.following} data="FOLLOWINGS" />
               <Card no={userData.public_repos} data="REPOS" />
@@ -90,7 +99,9 @@ function App() {
             <div className="mt-4 gap-1.5 flex flex-wrap ">
               {userData.location ? <Clip data={userData.location} /> : null}
               {userData.created_at ? (
-                <Clip data={userData.created_at.slice(0, 9)} />
+                <Clip
+                  data={new Date(userData.created_at).toLocaleDateString()}
+                />
               ) : null}
               {userData.twitter_username ? (
                 <Clip data={userData.twitter_username} />
